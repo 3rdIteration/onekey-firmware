@@ -1,8 +1,6 @@
 name: "build-touch"
 
 on:
-  schedule:
-    - cron: '30 19 * * 0,1,2,3,4'
   workflow_dispatch:
 
 jobs:
@@ -12,6 +10,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v3
+        with:
+          ref: refs/tags/touch/v4.2.0
 
       - name: Populate vars
         id: vars
@@ -64,17 +64,3 @@ jobs:
             ./core/build/bootloader/bootloader*Stable*.bin
             ./core/build/firmware/touch*Stable*.bin
 
-      - name: "Notify to Slack"
-        uses: onekeyhq/actions/notice-slack-app-update@main
-        with:
-          web-hook-url: ${{ secrets.SLACK_DEV_RELEASE_WEBHOOK }}
-          artifact-type: TOUCH-FIRMWARE
-          artifact-name: Touch-Hardware-Firmware
-          artifact-bundle-id: 'so.onekey.firmware.touch'
-          artifact-version-name: '${{ env.FIRMWARE_VERSION }}'
-          artifact-version-code: '${{ env.SHORT_HASH }}-${{ env.BUILD_DATE }}'
-          artifact-download-url: '${{ env.ARTIFACTS_URL }}'
-          change-log: 'firmware@${{ env.FIRMWARE_VERSION }} / boot@${{ env.BOOT_VERSION }}'
-          custom-issue-url: ''
-          custom-message-title: ''
-          custom-message-payload: ''
